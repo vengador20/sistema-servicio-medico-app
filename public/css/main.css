@@ -1,0 +1,10 @@
+body {
+    background-image: url(../img/5.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;    
+}
+
+.footer{
+    background-color: blue;
+}

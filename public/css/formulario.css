@@ -1,0 +1,57 @@
+/* @import url("/static/css/alerts.css"); */
+body {
+  background-image: url(../img/5.jpg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  width: 90%;
+}
+
+.form-control {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.568);
+  color: white;
+}
+
+.form-control {
+  background: rgba(135, 96, 243, 0.3);
+  border-style: none;
+  transition: 0.5s ease-in;
+  outline: none;
+  box-shadow: none;
+}
+
+.form-control:focus {
+  background: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.form-control::placeholder {
+  color: white;
+}
+
+.btn {
+  background: #222a3f;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 700 !important;
+  color: white;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.568);
+  transition: 0.5s ease-in;
+}
+
+.btn:hover {
+  color: white;
+}
+
+.form-select {
+  background: rgba(135, 96, 243, 0.3);
+  border-style: none;
+  transition: 0.5s ease-in;
+  outline: none;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.568);
+}

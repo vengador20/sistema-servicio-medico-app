@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/css/login1.css" />
+    <title>Todos estamos con tigo</title>
+  </head>
+
+  <body>
+    <!--====================================barra de navegacion=======================================================!-->
+    <nav class="navbar navbar-expand-lg bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand text-light" href="#">TODOS ESTAMOS CON TIGO</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a
+                class="nav-link active text-light fs-6"
+                aria-current="page"
+                href="/"
+                >INICIO</a
+              >
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="BUSCAR"
+              aria-label="Search"
+            />
+            <button
+              class="btn btn-outline-success text-light"
+              type="submit text-light"
+            >
+              BUSCAR
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <!--====================================formulario cliente=======================================================!-->
+    <div class="container">
+      <div class="row justify-content-center pt-5 mt-5 m-1">
+        <div class="col-md-6 col-sm-8 col-xl-4 col-lg-5 formulario">
+          <form>
+            <div class="form-group text-center pt-3">
+              <h1 class="text-light">Cliente</h1>
+            </div>
+            <div class="form-group mx-sm-4 pt-3 text-lighg">
+              <input
+                id="nombre"
+                type="text"
+                class="form-control text-light"
+                placeholder="Ingrese su nombre"
+              />
+            </div>
+            <div class="form-group mx-sm-4 pb-3">
+              <input
+                id="apellidos"
+                type="text"
+                class="form-control text-light"
+                placeholder="Ingrese su apellidos"
+              />
+            </div>
+            <div class="form-group mx-sm-4 pb-3">
+              <input
+                id="email"
+                type="text"
+                class="form-control text-light"
+                placeholder="Ingrese su correo electronico"
+              />
+            </div>
+            <div class="form-group mx-sm-4 pb-3">
+              <input
+                id="password"
+                type="text"
+                class="form-control text-light"
+                placeholder="Ingrese su contraseña"
+              />
+            </div>
+            <div id="message" class="p-2 m-2 text-light rounded"></div>
+            <div class="form-group mx-sm-4 pb-2">
+              <input
+                type="submit"
+                class="btn btn-block ingresar"
+                value="GUARDAR"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const buttonSubmit = document.querySelector("input[type=submit]");
+
+      const nombre = document.getElementById("nombre");
+      const apellidos = document.getElementById("apellidos");
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+
+      const message = document.getElementById("message");
+
+      buttonSubmit.addEventListener("click", registerCliente);
+
+      function registerCliente(e) {
+        e.preventDefault();
+
+        axios
+          .post(
+            "http://localhost:3000/api/register",
+            {
+              nombre: nombre.value + "||" + apellidos.value,
+              email: email.value,
+              tipo: 0,
+              password: password.value,
+            },
+            {
+              withCredentials: true,
+            }
+          )
+          .then(function (response) {
+            console.log(response.data);
+            message.style.backgroundColor = "#1da721";
+            message.innerHTML = "Usuario creado correctamente";
+          })
+          .catch(function (error) {
+            //parsear la respuesta
+            const res = JSON.parse(error.request.response);
+            let li = "";
+            res.errors.forEach((el) => {
+              console.log(el);
+              li += `<li>${el}</li>`;
+            });
+            message.style.backgroundColor = "#a71d36";
+            message.innerHTML = `
+              <ul>
+                ${li}
+              </ul>
+              `;
+          });
+      }
+    </script>
+  </body>
+</html>
