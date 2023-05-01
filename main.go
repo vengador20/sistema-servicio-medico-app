@@ -3,13 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html"
 	"github.com/joho/godotenv"
@@ -36,10 +34,10 @@ func main() {
 
 	app.Static("/static", "./public")
 
-	app.Use(filesystem.New(filesystem.Config{
-		Root:   http.Dir("./public/img/servicios"),
-		Browse: true,
-	}))
+	// app.Use(filesystem.New(filesystem.Config{
+	// 	Root:   http.Dir("./public/img/servicios"),
+	// 	Browse: true,
+	// }))
 
 	// app.Use(cors.New(cors.Config{
 	// 	AllowCredentials: true,
