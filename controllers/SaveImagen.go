@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const date string = time.DateOnly
+var t = time.Now()
 
 func SaveImagen(nombre, imagen string) error {
 	//index del string base 64
@@ -28,6 +28,9 @@ func SaveImagen(nombre, imagen string) error {
 
 	//ruta absoluta
 	path, _ := os.Getwd()
+
+	date := fmt.Sprintf("%d-%02d-%02d",
+		t.Year(), t.Month(), t.Day())
 
 	newpath := filepath.Join(path + "/public/img/servicios/" + date)
 	os.MkdirAll(newpath, os.ModePerm)
