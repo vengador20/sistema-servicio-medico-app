@@ -9,13 +9,13 @@ type ServiciosFuneraria struct {
 }
 
 type Cita struct {
-	Fecha          string             `json:"fecha" validate:"required"`
-	Hora           string             `json:"hora" validate:"required"`
-	NombreCompleto string             `json:"pacienteNombre" validate:"required"`
-	Telefono       uint64             `json:"telefono" validate:"required"`
-	Alergias       string             `json:"alergias" validate:"required"`
-	IdUser         primitive.ObjectID `json:"idUser" validate:"required"`
-	IdServicio     primitive.ObjectID `json:"idServicio" validate:"required"`
+	Fecha          string `json:"fecha" validate:"required"`
+	Hora           string `json:"hora" validate:"required"`
+	NombreCompleto string `json:"pacienteNombre" validate:"required"`
+	Telefono       uint64 `json:"telefono" validate:"required"`
+	Alergias       string `json:"alergias" validate:"required"`
+	IdUser         string `json:"idUser" validate:"required"`
+	IdServicio     string `json:"idServicio" validate:"required"`
 }
 
 type ServicioCitas struct {

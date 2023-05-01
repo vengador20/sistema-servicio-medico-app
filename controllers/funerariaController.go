@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/vengador20/sistema-servicios-medicos/database/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const (
@@ -62,6 +64,38 @@ const (
 // 	return c.JSON(Response{Message: res})
 // }
 
+func (con *Controllers) GetFunerariaById(c *fiber.Ctx) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	id := c.Params("id")
+
+	db := con.Client
+
+	coll, _ := db.Collection(TABLEUSER)
+
+	var res bson.M
+
+	idEx, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	filter := bson.D{{Key: "_id", Value: idEx}}
+
+	err = coll.FindOne(ctx, filter).Decode(&res)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	return c.JSON(Response{Message: res})
+}
+
 func (con *Controllers) GetFuneraria(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -70,18 +104,27 @@ func (con *Controllers) GetFuneraria(c *fiber.Ctx) error {
 
 	db := con.Client
 
-	coll, _ := db.Collection(TABLEUSER)
+	coll, _ := db.Collection(TABLESERVICIOFUNERARIA)
 
-	filter := bson.D{{Key: "$and", Value: []bson.M{
-		{"tipo": 1},
-		{"servicio": funeraria},
-	},
+	funerariaSer := bson.D{{
+		Key: "$lookup", Value: bson.M{
+			"from":         "users",  // tabla ala que esta relacionada
+			"localField":   "idUser", // local id o llave local
+			"foreignField": "_id",    // llave la otra tabla
+			"as":           "idUser", // nombre que se llamara
+		},
 	}}
 
-	cur, err := coll.Find(ctx, filter)
+	// filter := bson.D{{Key: "$and", Value: []bson.M{
+	// 	{"tipo": 1},
+	// 	{"servicio": funeraria},
+	// },
+	// }}
+
+	cur, err := coll.Aggregate(ctx, mongo.Pipeline{funerariaSer})
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	var res []bson.M
@@ -91,7 +134,7 @@ func (con *Controllers) GetFuneraria(c *fiber.Ctx) error {
 	//fmt.Println(res)
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	return c.JSON(Response{Message: res})
@@ -134,7 +177,7 @@ func (con *Controllers) CrearServicioFuneraria(c *fiber.Ctx) error {
 	_, err = cur.InsertOne(ctx, insert)
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	return c.JSON(Response{Message: "exito"})
@@ -151,7 +194,7 @@ func (con *Controllers) ModificarServicioFuneraria(c *fiber.Ctx) error {
 	err := c.BodyParser(&servicio)
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	errors, err := config.Validate(servicio)
@@ -172,7 +215,7 @@ func (con *Controllers) ModificarServicioFuneraria(c *fiber.Ctx) error {
 	cur, err := db.Collection(TABLESERVICIOFUNERARIA)
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	id, err := primitive.ObjectIDFromHex(serId["id"].(string))
@@ -189,7 +232,7 @@ func (con *Controllers) ModificarServicioFuneraria(c *fiber.Ctx) error {
 	_, err = cur.UpdateOne(ctx, filter, update)
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	return c.JSON(Response{Message: "exito"})
@@ -210,19 +253,19 @@ func (con *Controllers) EliminarServicioFuneraria(c *fiber.Ctx) error {
 	cur, err := db.Collection(TABLESERVICIOFUNERARIA)
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	id, err := primitive.ObjectIDFromHex(serId["id"].(string))
 	//fmt.Println(id)
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	_, err = cur.DeleteOne(ctx, bson.M{"_id": id})
 
 	if err != nil {
-		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
 	return c.JSON(Response{Message: "exito"})

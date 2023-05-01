@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/vengador20/sistema-servicios-medicos/config"
 	"github.com/vengador20/sistema-servicios-medicos/database/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (con *Controllers) AgendarCitaMedica(c *fiber.Ctx) error {
@@ -21,10 +23,14 @@ func (con *Controllers) AgendarCitaMedica(c *fiber.Ctx) error {
 	var body models.Cita
 
 	err := c.BodyParser(&body)
+	fmt.Println("erorr")
 
 	if err != nil {
+		fmt.Println(err.Error())
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
+
+	fmt.Println("error")
 
 	errors, err := config.Validate(body)
 
@@ -33,11 +39,18 @@ func (con *Controllers) AgendarCitaMedica(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(Response{Message: "error", Errors: errors})
 	}
 
+	fmt.Println("error")
+
 	coll, err := db.Collection(TABLECITAS)
 
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
+
+	fmt.Println("guardar")
+
+	IdUser, _ := primitive.ObjectIDFromHex(body.IdUser)
+	IdServicio, _ := primitive.ObjectIDFromHex(body.IdServicio)
 
 	insert := bson.M{
 		"fecha":          body.Fecha,
@@ -45,8 +58,8 @@ func (con *Controllers) AgendarCitaMedica(c *fiber.Ctx) error {
 		"pacienteNombre": body.NombreCompleto,
 		"telefono":       body.Telefono,
 		"alergias":       body.Alergias,
-		"idUser":         body.IdUser,     //id del servicio usuario
-		"idServicio":     body.IdServicio, //id del servicio medico
+		"idUser":         IdUser,     //id del servicio usuario
+		"idServicio":     IdServicio, //id del servicio medico
 	}
 
 	coll.InsertOne(ctx, insert)

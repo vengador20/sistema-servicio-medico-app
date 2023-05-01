@@ -13,7 +13,10 @@ require (
 	golang.org/x/crypto v0.7.0
 )
 
-require github.com/kolesa-team/go-webp v1.0.4 // indirect
+require (
+	github.com/fatih/structs v1.1.0 // indirect
+	github.com/kolesa-team/go-webp v1.0.4 // indirect
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect

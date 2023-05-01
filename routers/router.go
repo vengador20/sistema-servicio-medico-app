@@ -37,6 +37,17 @@ func (r *Router) Router(router fiber.Router) {
 	router.Post("/register", controller.RegisterUser)
 
 	//prueba
+
+	router.Get(funeraria, controller.GetFuneraria)
+
+	router.Get(funeraria+"/:id", controller.GetFunerariaById)
+
+	router.Post(funeraria, controller.CrearServicioFuneraria)
+
+	router.Get(medico, controller.GetMedicos)
+
+	router.Get(medico+"/:id", controller.GetMedicoById)
+
 	router.Get(oxigeno+"/:id", controller.GetOxigenoByid)
 
 	router.Post(oxigeno, controller.CrearOxigeno)
@@ -57,7 +68,7 @@ func (r *Router) Router(router fiber.Router) {
 
 	//router.Get("/citas", controller.GetCitas)
 
-	api := router.Group("/api/servicios")
+	api := router.Group("/servicios")
 
 	//utilizar middleware personalizado
 	//valida si el jwt no es modificado

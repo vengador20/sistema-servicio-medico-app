@@ -1,0 +1,15 @@
+# Ignora archivos del sistema
+.DS_store
+
+#air temp
+./tmp
+
+#compilacion
+./app.exe
+./app
+./Archivador.zip
+./sistema-servicios-medicos
+./bin/*
+
+#variable de entorno
+*.env

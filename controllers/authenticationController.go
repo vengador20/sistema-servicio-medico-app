@@ -122,18 +122,23 @@ func (con *Controllers) RegisterUser(c *fiber.Ctx) error {
 
 	c.BodyParser(&mp)
 
-	//fmt.Println(mp["tipo"])
-
-	var tipo float64 = mp["tipo"].(float64)
 	var err error
 
 	// 0 es un paciente y 1 es servicio	switch tipo {
-	switch tipo {
-	case 0:
+	if mp["tipo"] == "" || mp["tipo"] == nil || mp["tipo"] == 0 {
 		err = registerUser(c, ctx, con)
-	case 1:
+	} else {
 		err = registerService(c, ctx, con)
 	}
+
+	//var tipo uint = mp["tipo"].(uint)
+
+	// switch tipo {
+	// case 0:
+	// 	err = registerUser(c, ctx, con)
+	// case 1:
+	// 	err = registerService(c, ctx, con)
+	// }
 
 	return err
 }
