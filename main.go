@@ -102,5 +102,5 @@ func main() {
 
 	app.Route("/", routers.Web)
 
-	app.Listen(":" + port)
+	app.Listen("0.0.0.0:" + port)
 }
