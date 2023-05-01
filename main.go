@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,12 +12,21 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html"
+	"github.com/joho/godotenv"
 	"github.com/vengador20/sistema-servicios-medicos/controllers"
 	"github.com/vengador20/sistema-servicios-medicos/database"
 	"github.com/vengador20/sistema-servicios-medicos/routers"
 )
 
 func main() {
+
+	err := godotenv.Load()
+
+	if err != nil {
+		fmt.Println("Error loading.env file")
+	}
+
+	port := os.Getenv("PORT")
 
 	engine := html.New("./view", ".html")
 
@@ -92,5 +102,5 @@ func main() {
 
 	app.Route("/", routers.Web)
 
-	app.Listen(":3000")
+	app.Listen(":" + port)
 }
