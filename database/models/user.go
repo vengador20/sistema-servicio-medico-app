@@ -32,6 +32,7 @@ type UserLogin struct {
 }
 
 type ServicioRegister struct {
+	Id primitive.ObjectID `json:"_id" bson:"_id"`
 	//Nombres       string  `json:"nombres" validate:"required"`
 	//NombreUsuario string  `json:"nombreUsuario" validate:"required"`
 	NombreNegocio  string `json:"nombreNegocio" validate:"required"`
@@ -52,7 +53,7 @@ type UserRegister struct {
 	Nombres         string `json:"nombres" bson:"nombres,omitempty" validate:"required"`
 	FechaNacimiento string `json:"fecha" bson:"fecha,omitempty" validate:"required"`
 	Email           string `json:"email" bson:"email,omitempty" validate:"required,email"`
-	Telefono        uint64   `json:"telefono" bson:"telefono,omitempty" validate:"required"` //numeros enteros
+	Telefono        uint64 `json:"telefono" bson:"telefono,omitempty" validate:"required"` //numeros enteros
 	Password        string `json:"password" bson:"password,omitempty" validate:"required"`
 	Tipo            uint8  `json:"tipo" bson:"tipo,omitempty"` // 0 es un paciente y 1 es servicio
 }

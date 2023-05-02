@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/static/css/login1.css" />
+    <title>Todos estamos contigo</title>
+</head>
+
+<body>
+    <!--====================================barra de navegacion=======================================================!-->
+    <nav class="navbar navbar-expand-lg bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light" href="#">TODOS ESTAMOS CONTIGO</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active text-light fs-6" aria-current="page" href="/">INICIO</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="BUSCAR" aria-label="Search" />
+                    <button class="btn btn-outline-success text-light" type="submit text-light">
+                        BUSCAR
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <!--====================================formulario cliente=======================================================!-->
+    <div class="container">
+        <div class="row justify-content-center pt-5 mt-5 m-1">
+            <div class="col-md-6 col-sm-8 col-xl-4 col-lg-5 formulario">
+
+                <form>
+                    <div class="form-group mx-sm-4 pt-3 text-lighg" id="data" data-id="{{ .message }}">
+                        <input id="nombre" type="text" class="form-control text-light"
+                            placeholder="Ingrese el nombre" />
+                    </div>
+                    <div class="form-group mx-sm-4 pb-3">
+                        <input id="costo" type="text" class="form-control text-light" placeholder="Ingrese el costo" />
+                    </div>
+                    <div class="form-group mx-sm-4 pb-3">
+                        <select class="form-select" aria-label="Default select example" id="tipo">
+                            <option value="renta" selected>renta</option>
+                            <option value="venta">venta</option>
+                        </select>
+                    </div>
+                    <div id="message" class="p-2 m-2 text-light rounded"></div>
+                    <input type="submit" class="btn btn-block ingresar" value="GUARDAR" />
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const buttonSubmit = document.querySelector("input[type=submit]");
+        //console.log(buttonSubmit)
+
+        const nombre = document.getElementById("nombre");
+        const costo = document.getElementById("costo");
+        const data = document.getElementById("data")
+
+        //const select = document.querySelector("select.form-select")
+        const tigo = document.getElementById("tipo")
+
+        const message = document.getElementById("message");
+
+        buttonSubmit.addEventListener("click", updateOxigeno
+            // function (e) {
+            //     e.preventDefault();
+            //     console.log({
+            //         id: data.getAttribute("data-id"),
+            //         nombre: nombre.value,
+            //         costo: costo.value,
+            //         tipo: select.value
+            //     }
+            //     )
+            // }
+        );
+
+        function updateOxigeno(e) {
+            e.preventDefault();
+
+            if (isNaN(parseInt(costo.value)) || parseInt(costo.value) === null) {
+                message.innerHTML = "Campo Costo se requiere números"
+            } else if (tigo.value !== "renta" && tigo.value !== "venta") {
+                message.innerHTML = "Selecciona el tipo del servico"
+            } else {
+                axios
+                    .post(
+                        "http://localhost:3000/api/servicios/oxigeno/",
+                        {
+                            idServicio: data.getAttribute("data-id"),
+                            nombre: nombre.value,
+                            costo: parseInt(costo.value),
+                            tipo: tipo.value
+                        },
+                        {
+                            withCredentials: true,
+                        }
+                    )
+                    .then(function (response) {
+                        console.log(response.data);
+                        message.style.backgroundColor = "#1da721";
+                        message.innerHTML = "Servicio Modificado Correctamente";
+                    })
+                    .catch(function (error) {
+                        //parsear la respuesta
+                        const res = JSON.parse(error.request.response);
+                        let li = "";
+                        res.errors.forEach((el) => {
+                            console.log(el);
+                            li += `<li>${el}</li>`;
+                        });
+                        message.style.backgroundColor = "#a71d36";
+                        message.innerHTML = `
+              <ul>
+                ${li}
+              </ul>
+              `;
+                    });
+            }
+        }
+    </script>
+</body>
+
+</html>

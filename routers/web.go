@@ -213,6 +213,84 @@ func Web(router fiber.Router) {
 		})
 	})
 
+	router.Get("/perfil/funeraria/create", func(c *fiber.Ctx) error {
+
+		cookie := c.Cookies("token")
+
+		token := config.ExtractClaims(cookie)
+
+		if token["email"] == nil || token["email"] == "" {
+			return c.Render("404", "")
+		}
+
+		res, err := http.Get("http://localhost:3000/api/user/" + token["email"].(string))
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var user response
+
+		err = json.Unmarshal(body, &user)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+		fmt.Println(user.Message)
+		if user.Message.Tipo == 0 {
+			return c.Render("404", "")
+		}
+
+		return c.Render("servicio/form/funeraria", fiber.Map{
+			"message": user.Message.Id.Hex(),
+		})
+	})
+
+	router.Get("/perfil/oxigeno/create", func(c *fiber.Ctx) error {
+
+		cookie := c.Cookies("token")
+
+		token := config.ExtractClaims(cookie)
+
+		if token["email"] == nil || token["email"] == "" {
+			return c.Render("404", "")
+		}
+
+		res, err := http.Get("http://localhost:3000/api/user/" + token["email"].(string))
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var user response
+
+		err = json.Unmarshal(body, &user)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+		fmt.Println(user.Message)
+		if user.Message.Tipo == 0 {
+			return c.Render("404", "")
+		}
+
+		return c.Render("servicio/form/oxigeno", fiber.Map{
+			"message": user.Message.Id.Hex(),
+		})
+	})
+
 	router.Get("/perfil/oxigeno/update/:id", func(c *fiber.Ctx) error {
 
 		id := c.Params("id")
