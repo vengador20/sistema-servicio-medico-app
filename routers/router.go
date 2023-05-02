@@ -12,14 +12,15 @@ type Router struct {
 }
 
 const (
-	funeraria      string = "/servicio-funeraria"
-	enfermeros     string = "/enfermeros"
-	medico         string = "/medico"
-	cita           string = "/cita-medica"
-	servicioMedico string = "/perfil/servicio-medico"
-	centroSalud    string = "/centro-salud"
-	oxigeno        string = "/oxigeno"
-	medicamento    string = "/medicamento"
+	funeraria          string = "/servicio-funeraria"
+	enfermeros         string = "/enfermeros"
+	medico             string = "/medico"
+	cita               string = "/cita-medica"
+	servicioMedico     string = "/perfil/servicio-medico"
+	servicioEnfermeria string = "/perfil/servicio-enfermeria"
+	centroSalud        string = "/centro-salud"
+	oxigeno            string = "/oxigeno"
+	medicamento        string = "/medicamento"
 )
 
 func (r *Router) Router(router fiber.Router) {
@@ -91,6 +92,8 @@ func (r *Router) Router(router fiber.Router) {
 	router.Post(medicamento, controller.CrearMedicamento)
 
 	router.Get(servicioMedico+"/:email", controller.GetCitas)
+
+	router.Get(servicioEnfermeria+"/:email", controller.GetCitasEnfermeria)
 
 	router.Get(cita+"/:id", controller.GetCitaMedicaById)
 

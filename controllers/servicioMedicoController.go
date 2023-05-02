@@ -118,6 +118,71 @@ func (con *Controllers) GetCitas(c *fiber.Ctx) error {
 	return c.JSON(Response{Message: res})
 }
 
+func (con *Controllers) GetCitasEnfermeria(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	// var body map[string]interface{}
+
+	// err := c.BodyParser(&body)
+
+	// if err != nil {
+	// 	return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	// }
+
+	db := con.Client
+
+	coll, err := db.Collection(TABLECITAS)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	// token := c.Cookies("token")
+
+	// data := config.ExtractClaims(token)
+
+	email := c.Params("email")
+
+	//fmt.Println("email", email)
+	// filter := bson.D{{
+	// 	Key: "_id", Value: data["email"],
+	// }}
+
+	filterUser := bson.D{{Key: "$lookup", Value: bson.M{
+		"from":         "users",      // tabla ala que esta relacionada
+		"localField":   "idServicio", // local id o llave local
+		"foreignField": "_id",        // llave la otra tabla
+		"as":           "idServicio", // nombre que se llamara
+	}}}
+
+	filterServicio := bson.D{{Key: "$lookup", Value: bson.M{
+		"from":         "users",  // tabla ala que esta relacionada
+		"localField":   "idUser", // local id o llave local
+		"foreignField": "_id",    // llave la otra tabla
+		"as":           "idUser", // nombre que se llamara
+	}}}
+
+	filter := bson.D{{Key: "$match", Value: bson.M{
+		"idServicio.email": email,
+	}}}
+
+	cur, err := coll.Aggregate(ctx, mongo.Pipeline{filterUser, filterServicio, filter})
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	var res []models.ServicioCitas
+
+	//fmt.Printf("res: %v\n", res)
+
+	cur.All(ctx, &res)
+
+	return c.JSON(Response{Message: res})
+}
+
 func (con *Controllers) ModificarCita(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

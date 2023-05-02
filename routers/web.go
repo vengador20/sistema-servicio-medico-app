@@ -170,8 +170,10 @@ func Web(router fiber.Router) {
 		} else if user.Message.Servicio == "medico" {
 			js = IsFuneraria("http://localhost:3000/api/perfil/servicio-medico/" + user.Message.Email)
 		} else if user.Message.Servicio == "enfermeros" {
-			js = IsFuneraria("http://localhost:3000/api/enfermeros/" + user.Message.Email)
+			js = IsFuneraria("http://localhost:3000/api/perfil/servicio-enfermeria/" + user.Message.Email)
 		}
+
+		fmt.Println(js)
 
 		return c.Render("perfilprestador", fiber.Map{
 			"telefono":       user.Message.Telefono,

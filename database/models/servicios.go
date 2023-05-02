@@ -23,6 +23,17 @@ type ServicioCitas struct {
 	Id             primitive.ObjectID `json:"_id" bson:"_id"`
 	Fecha          string             `json:"fecha" validate:"required"`
 	Hora           string             `json:"hora" validate:"required"`
+	NombreCompleto string             `json:"pacienteNombre" validate:"required" bson:"pacienteNombre"`
+	Telefono       uint64             `json:"telefono" validate:"required"`
+	Alergias       string             `json:"alergias" validate:"required"`
+	IdUser         []User             `json:"idUser" validate:"required"`
+	IdServicio     []UserService      `json:"idServicio" validate:"required"`
+}
+
+type ServicioCitasEnfermeros struct {
+	Id             primitive.ObjectID `json:"_id" bson:"_id"`
+	Fecha          string             `json:"fecha" validate:"required"`
+	Hora           string             `json:"hora" validate:"required"`
 	NombreCompleto string             `json:"pacienteNombre" validate:"required"`
 	Telefono       uint64             `json:"telefono" validate:"required"`
 	Alergias       string             `json:"alergias" validate:"required"`
