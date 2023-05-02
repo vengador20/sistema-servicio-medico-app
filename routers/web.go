@@ -23,6 +23,35 @@ type response struct {
 // 	Errors  []string               `json:"errors"`
 // }
 
+func IsFuneraria(url string) map[string]any {
+	var js map[string]any
+
+	resServicio, err := http.Get(url)
+
+	if err != nil {
+		js["message"] = ""
+		return js
+	}
+
+	bodySer, err := io.ReadAll(resServicio.Body)
+	fmt.Println("nil")
+
+	if err != nil {
+		js["message"] = ""
+		return js
+	}
+
+	err = json.Unmarshal(bodySer, &js)
+
+	if err != nil {
+		js["message"] = ""
+		return js
+	}
+
+	fmt.Printf("js: %v\n", js)
+	return js
+}
+
 var wg sync.WaitGroup
 
 func Web(router fiber.Router) {
@@ -73,6 +102,39 @@ func Web(router fiber.Router) {
 		if token["email"] == nil || token["email"] == "" {
 			return c.Render("404", "")
 		}
+		// wg.Add(1)
+
+		// go func() {
+		// 	defer wg.Done()
+
+		// 	res, err := http.Get("http://localhost:3000/api/servicio-funeraria")
+
+		// 	if err != nil {
+		// 		js["message"] = ""
+		// 		return
+		// 	}
+
+		// 	body, err := io.ReadAll(res.Body)
+
+		// 	if err != nil {
+		// 		js["message"] = ""
+		// 		return
+		// 	}
+		// 	fmt.Println("hola")
+		// 	err = json.Unmarshal(body, &js)
+
+		// 	if err != nil {
+		// 		js["message"] = ""
+		// 		return
+		// 	}
+
+		// 	fmt.Printf("js: %v\n", js)
+
+		// 	return
+		// 	// return c.Render("oxigeno", fiber.Map{
+		// 	// 	"message": js["message"],
+		// 	// })
+		// }()
 
 		res, err := http.Get("http://localhost:3000/api/user/" + token["email"].(string))
 
@@ -98,12 +160,118 @@ func Web(router fiber.Router) {
 			return c.Render("404", "")
 		}
 
+		//wg.Wait()
+		var js map[string]any
+
+		// if user.Message.Servicio == "funeraria" {
+		// 	js = IsFuneraria("http://localhost:3000/api/servicio-funeraria")
+		// } else if user.Message.Servicio == "oxigeno" {
+		// 	js = IsFuneraria("http://localhost:3000/api/oxigeno")
+		// } else if user.Message.Servicio == "medico" {
+		// 	js = IsFuneraria("http://localhost:3000/api/medico")
+		// } else if user.Message.Servicio == "enfermeros" {
+		// 	js = IsFuneraria("http://localhost:3000/api/enfermeros")
+		// }
+		fmt.Println("email", user.Message.Email)
+		js = IsFuneraria("http://localhost:3000/api/perfil/servicio-medico/" + user.Message.Email)
+
 		return c.Render("perfilprestador", fiber.Map{
 			"telefono":       user.Message.Telefono,
 			"email":          user.Message.Email,
 			"servicio":       user.Message.Servicio,
 			"nombreCompleto": user.Message.NombreCompleto,
 			"nombreNegocio":  user.Message.NombreNegocio,
+			"message":        js["message"],
+		})
+	})
+
+	router.Get("/perfil/funeraria/update/:id", func(c *fiber.Ctx) error {
+
+		id := c.Params("id")
+
+		res, err := http.Get("http://localhost:3000/api/servicio-funeraria/update-one/" + id)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("funeraria", "")
+		}
+		fmt.Println(js)
+
+		return c.Render("servicio/update/funeraria", fiber.Map{
+			"message": js["message"],
+		})
+	})
+
+	router.Get("/perfil/oxigeno/update/:id", func(c *fiber.Ctx) error {
+
+		id := c.Params("id")
+
+		res, err := http.Get("http://localhost:3000/api/oxigeno/" + id)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("oxigeno", "")
+		}
+		fmt.Println(js)
+
+		return c.Render("servicio/update/oxigeno", fiber.Map{
+			"message": js["message"],
+		})
+	})
+
+	router.Get("/perfil/medico/update/:id", func(c *fiber.Ctx) error {
+
+		id := c.Params("id")
+
+		res, err := http.Get("http://localhost:3000/api/cita-medica/" + id)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("medico", "")
+		}
+		fmt.Println(js)
+
+		return c.Render("servicio/update/medico", fiber.Map{
+			"message": js["message"],
 		})
 	})
 
@@ -317,7 +485,61 @@ func Web(router fiber.Router) {
 	})
 
 	router.Get("/enfermeria", func(c *fiber.Ctx) error {
-		return c.Render("enfermeria", "")
+
+		res, err := http.Get("http://localhost:3000/api/enfermeros")
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("funeraria", fiber.Map{
+				"message": "",
+			})
+		}
+
+		return c.Render("enfermeria", fiber.Map{
+			"message": js["message"],
+		})
+	})
+
+	router.Get("/oxigeno", func(c *fiber.Ctx) error {
+
+		res, err := http.Get("http://localhost:3000/api/oxigeno")
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("oxigeno", fiber.Map{
+				"message": "",
+			})
+		}
+
+		return c.Render("oxigeno", fiber.Map{
+			"message": js["message"],
+		})
 	})
 
 	router.Get("/login/servicio", func(c *fiber.Ctx) error {

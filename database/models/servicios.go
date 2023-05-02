@@ -9,26 +9,29 @@ type ServiciosFuneraria struct {
 }
 
 type Cita struct {
-	Fecha          string `json:"fecha" validate:"required"`
-	Hora           string `json:"hora" validate:"required"`
-	NombreCompleto string `json:"pacienteNombre" validate:"required"`
-	Telefono       uint64 `json:"telefono" validate:"required"`
-	Alergias       string `json:"alergias" validate:"required"`
-	IdUser         string `json:"idUser" validate:"required"`
-	IdServicio     string `json:"idServicio" validate:"required"`
+	Id             primitive.ObjectID `json:"_id" bson:"_id"`
+	Fecha          string             `json:"fecha" validate:"required"`
+	Hora           string             `json:"hora" validate:"required"`
+	NombreCompleto string             `json:"pacienteNombre" validate:"required"`
+	Telefono       uint64             `json:"telefono" validate:"required"`
+	Alergias       string             `json:"alergias" validate:"required"`
+	IdUser         string             `json:"idUser" validate:"required"`
+	IdServicio     string             `json:"idServicio" validate:"required"`
 }
 
 type ServicioCitas struct {
-	Fecha          string        `json:"fecha" validate:"required"`
-	Hora           string        `json:"hora" validate:"required"`
-	NombreCompleto string        `json:"pacienteNombre" validate:"required"`
-	Telefono       uint64        `json:"telefono" validate:"required"`
-	Alergias       string        `json:"alergias" validate:"required"`
-	IdUser         []User        `json:"idUser" validate:"required"`
-	IdServicio     []UserService `json:"idServicio" validate:"required"`
+	Id             primitive.ObjectID `json:"_id" bson:"_id"`
+	Fecha          string             `json:"fecha" validate:"required"`
+	Hora           string             `json:"hora" validate:"required"`
+	NombreCompleto string             `json:"pacienteNombre" validate:"required"`
+	Telefono       uint64             `json:"telefono" validate:"required"`
+	Alergias       string             `json:"alergias" validate:"required"`
+	IdUser         []User             `json:"idUser" validate:"required"`
+	IdServicio     []UserService      `json:"idServicio" validate:"required"`
 }
 
 type ServiciOxigeno struct {
+	Id         primitive.ObjectID `json:"_id" bson:"_id"`
 	Nombre     string             `json:"nombre" validate:"required"`
 	Costo      float64            `json:"costo" validate:"required"`
 	Tipo       string             `json:"tipo" validate:"required"` //renta o venta
@@ -56,6 +59,14 @@ type MedicamentoModel struct {
 	Precio     float64       `json:"precio" validate:"required"`
 	Domicilio  bool          `json:"domicilio" validate:"required"`
 	IdServicio []UserService `json:"idServicio" validate:"required"`
+}
+
+type OxigenoModel struct {
+	Id         primitive.ObjectID `json:"_id" bson:"_id"`
+	Nombre     string             `json:"nombre" validate:"required"`
+	Costo      float64            `json:"costo" validate:"required"`
+	Tipo       string             `json:"tipo" validate:"required"` //renta o venta
+	IdServicio []UserService      `json:"idServicio" validate:"required"`
 }
 
 // (imagen del medicamento, precio,

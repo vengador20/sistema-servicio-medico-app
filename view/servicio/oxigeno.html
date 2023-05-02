@@ -1,0 +1,83 @@
+<div class="container text-center text-light mt-4 bg-light p-2 rounded mb-4">
+    <div class="row">
+        {{ range .message }}
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Nombre: {{ .nombre}}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">Costo: {{ .costo }} </h6>
+                    <p class="card-text"></p>
+                    <a href="/perfil/oxigeno/update/{{._id}}" class="card-link">Editar</a>
+                    <button data-id="{{._id}}" class="card-link eliminar-btn">Eliminar</button>
+                </div>
+            </div>
+
+        </div>
+        {{ end }}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+    let btn = document.querySelectorAll(".eliminar-btn")
+
+    btn.forEach(el => {
+        el.addEventListener("click", function (e) {
+            e.preventDefault()
+
+            let id = e.target.getAttribute("data-id")
+
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: false
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: 'Quieres eliminar el servicio?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar!',
+                cancelButtonText: 'No, cancelar!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    swalWithBootstrapButtons.fire(
+                        'Eliminado!',
+                        'Servicio Eliminado.',
+                        'success'
+                    )
+                    axios
+                        .delete(
+                            "http://localhost:3000/api/servicios/servicio-funeraria/" + id,
+                            {
+                                withCredentials: true,
+                            }
+                        )
+                        .then(function (response) {
+                            console.log(response.data);
+                        })
+                        .catch(function (error) {
+                            //parsear la respuesta
+                            console.log(error)
+                        });
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelado',
+                        'error'
+                    )
+                    //console.log("Suerte")
+                }
+            })
+        })
+    })
+
+
+</script>

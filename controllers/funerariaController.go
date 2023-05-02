@@ -64,6 +64,40 @@ const (
 // 	return c.JSON(Response{Message: res})
 // }
 
+func (con *Controllers) GetFunerariaByIdUpdate(c *fiber.Ctx) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	id := c.Params("id")
+
+	db := con.Client
+
+	coll, _ := db.Collection(TABLESERVICIOFUNERARIA)
+
+	var res bson.M
+
+	idEx, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	fmt.Println("id", id)
+
+	filter := bson.D{{Key: "_id", Value: idEx}}
+
+	err = coll.FindOne(ctx, filter).Decode(&res)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	return c.JSON(Response{Message: res})
+}
+
 func (con *Controllers) GetFunerariaById(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -197,6 +231,8 @@ func (con *Controllers) ModificarServicioFuneraria(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
+	servicio.IdUser = primitive.NewObjectID()
+
 	errors, err := config.Validate(servicio)
 
 	//los mensajes de error cuando los campos son requeridos etc...
@@ -244,9 +280,11 @@ func (con *Controllers) EliminarServicioFuneraria(c *fiber.Ctx) error {
 
 	defer cancel()
 
-	var serId map[string]interface{}
+	//var serId map[string]interface{}
 
-	c.BodyParser(&serId)
+	//c.BodyParser(&serId)
+
+	idDelete := c.Params("id")
 
 	db := con.Client
 
@@ -256,7 +294,7 @@ func (con *Controllers) EliminarServicioFuneraria(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
-	id, err := primitive.ObjectIDFromHex(serId["id"].(string))
+	id, err := primitive.ObjectIDFromHex(idDelete)
 	//fmt.Println(id)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})

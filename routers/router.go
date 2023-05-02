@@ -37,16 +37,28 @@ func (r *Router) Router(router fiber.Router) {
 	router.Post("/register", controller.RegisterUser)
 
 	//prueba
+	router.Delete(funeraria+"/:id", controller.EliminarServicioFuneraria)
+
+	// enefermeros
+	router.Get(enfermeros, controller.GetEnfermeros)
+
+	router.Get(enfermeros+"/:id", controller.GetEnfermerosById)
 
 	router.Get(funeraria, controller.GetFuneraria)
 
 	router.Get(funeraria+"/:id", controller.GetFunerariaById)
+
+	//fmt.Println(funeraria + "/update/:id")
+
+	router.Get(funeraria+"/update-one/:id", controller.GetFunerariaByIdUpdate)
 
 	router.Post(funeraria, controller.CrearServicioFuneraria)
 
 	router.Get(medico, controller.GetMedicos)
 
 	router.Get(medico+"/:id", controller.GetMedicoById)
+
+	router.Get(oxigeno, controller.GetOxigeno)
 
 	router.Get(oxigeno+"/:id", controller.GetOxigenoByid)
 
@@ -63,6 +75,12 @@ func (r *Router) Router(router fiber.Router) {
 	router.Get(medicamento, controller.GetMedicamentos)
 
 	router.Post(medicamento, controller.CrearMedicamento)
+
+	router.Get(servicioMedico+"/:email", controller.GetCitas)
+
+	router.Get(cita+"/:id", controller.GetCitaMedicaById)
+
+	router.Put(cita+"/:id", controller.ModificarCita)
 
 	//prueba
 
@@ -81,7 +99,7 @@ func (r *Router) Router(router fiber.Router) {
 
 	api.Put(funeraria, controller.ModificarServicioFuneraria)
 
-	api.Delete(funeraria, controller.EliminarServicioFuneraria)
+	api.Delete(funeraria+"/:id", controller.EliminarServicioFuneraria)
 
 	// medicos
 	api.Get(medico, controller.GetMedicos)
@@ -108,5 +126,7 @@ func (r *Router) Router(router fiber.Router) {
 	api.Get(oxigeno+"/:id", controller.GetOxigenoByid)
 
 	api.Post(oxigeno, controller.CrearOxigeno)
+
+	api.Put(oxigeno+"/:id", controller.ModificarOxigeno)
 
 }

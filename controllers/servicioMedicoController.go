@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/vengador20/sistema-servicios-medicos/config"
 	"github.com/vengador20/sistema-servicios-medicos/database/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -51,9 +51,8 @@ func (con *Controllers) CalendarioCitas(c *fiber.Ctx) error {
 }
 
 type CitaModificar struct {
-	IdCita string `json:"id"`
-	Fecha  string `json:"fecha"`
-	Hora   string `json:"hora"`
+	Fecha string `json:"fecha"`
+	Hora  string `json:"hora"`
 }
 
 func (con *Controllers) GetCitas(c *fiber.Ctx) error {
@@ -77,10 +76,13 @@ func (con *Controllers) GetCitas(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
-	token := c.Cookies("token")
+	// token := c.Cookies("token")
 
-	data := config.ExtractClaims(token)
+	// data := config.ExtractClaims(token)
 
+	email := c.Params("email")
+
+	//fmt.Println("email", email)
 	// filter := bson.D{{
 	// 	Key: "_id", Value: data["email"],
 	// }}
@@ -100,7 +102,7 @@ func (con *Controllers) GetCitas(c *fiber.Ctx) error {
 	}}}
 
 	filter := bson.D{{Key: "$match", Value: bson.M{
-		"idServicio.email": data["email"],
+		"idServicio.email": email,
 	}}}
 
 	cur, err := coll.Aggregate(ctx, mongo.Pipeline{filterUser, filterServicio, filter})
@@ -122,6 +124,8 @@ func (con *Controllers) ModificarCita(c *fiber.Ctx) error {
 
 	defer cancel()
 
+	id := c.Params("id")
+
 	var cita CitaModificar
 	c.BodyParser(&cita)
 
@@ -133,9 +137,11 @@ func (con *Controllers) ModificarCita(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 
-	filter := bson.M{"id": cita.IdCita}
+	idEx, _ := primitive.ObjectIDFromHex(id)
 
-	update := bson.M{"fecha": cita.Fecha, "hora": cita.Hora}
+	filter := bson.M{"_id": idEx}
+
+	update := bson.M{"$set": bson.M{"fecha": cita.Fecha, "hora": cita.Hora}}
 
 	_, err = coll.UpdateOne(ctx, filter, update)
 

@@ -13,6 +13,34 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func (con *Controllers) GetCitaMedicaById(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	db := con.Client
+
+	id := c.Params("id")
+
+	var cita models.Cita
+
+	coll, err := db.Collection(TABLECITAS)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	idEx, _ := primitive.ObjectIDFromHex(id)
+
+	filter := bson.M{
+		"_id": idEx,
+	}
+
+	coll.FindOne(ctx, filter).Decode(&cita)
+
+	return c.JSON(Response{Message: cita})
+}
+
 func (con *Controllers) AgendarCitaMedica(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 
