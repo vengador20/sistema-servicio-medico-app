@@ -633,4 +633,127 @@ func Web(router fiber.Router) {
 	router.Get("/register/cliente", func(c *fiber.Ctx) error {
 		return c.Render("formcliente", "")
 	})
+
+	router.Get("/search/oxigeno", func(c *fiber.Ctx) error {
+		nombre := c.FormValue("nombre")
+
+		res, err := http.Get("http://localhost:3000/api/oxigeno/search/" + nombre)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("oxigeno", fiber.Map{
+				"message": "",
+			})
+		}
+
+		return c.Render("servicio/search/oxigeno", fiber.Map{
+			"message": js["message"],
+		})
+
+		//return c.Render("servicio/search/oxigeno", "")
+	})
+
+	router.Get("/search/medico", func(c *fiber.Ctx) error {
+		nombre := c.FormValue("nombre")
+
+		res, err := http.Get("http://localhost:3000/api/medico/search/" + nombre)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("medico", fiber.Map{
+				"message": "",
+			})
+		}
+
+		return c.Render("servicio/form/medico", fiber.Map{
+			"message": js["message"],
+		})
+	})
+
+	router.Get("/search/funeraria", func(c *fiber.Ctx) error {
+		nombre := c.FormValue("nombre")
+
+		res, err := http.Get("http://localhost:3000/api/servicio-funeraria/search/" + nombre)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("funeraria", fiber.Map{
+				"message": "",
+			})
+		}
+
+		return c.Render("servicio/search/funeraria", fiber.Map{
+			"message": js["message"],
+		})
+	})
+
+	router.Get("/search/enfermeria", func(c *fiber.Ctx) error {
+
+		nombre := c.FormValue("nombre")
+
+		res, err := http.Get("http://localhost:3000/api/enfermeros/search/" + nombre)
+
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+
+		body, err := io.ReadAll(res.Body)
+
+		if err != nil {
+			fmt.Println("error")
+		}
+
+		var js map[string]any
+
+		err = json.Unmarshal(body, &js)
+
+		if err != nil {
+			c.Render("funeraria", fiber.Map{
+				"message": "",
+			})
+		}
+
+		return c.Render("servicio/search/enfermeria", fiber.Map{
+			"message": js["message"],
+		})
+	})
 }

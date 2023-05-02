@@ -53,6 +53,51 @@ const oxigeno = "oxigeno"
 // 	return c.JSON(Response{Message: res})
 // }
 
+func (con *Controllers) GetOxigenoSearch(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	db := con.Client
+
+	nombre := c.Params("nombre")
+
+	coll, err := db.Collection(oxigeno)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	filter := bson.D{{
+		Key: "$lookup", Value: bson.M{
+			"from":         "users",      // tabla ala que esta relacionada
+			"localField":   "idServicio", // local id o llave local
+			"foreignField": "_id",        // llave la otra tabla
+			"as":           "idServicio", // nombre que se llamara
+		},
+	}}
+
+	filterName := bson.D{{Key: "$match", Value: bson.M{
+		"nombre": bson.M{"$regex": nombre},
+	}}}
+
+	cur, err := coll.Aggregate(ctx, mongo.Pipeline{filter, filterName})
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	var res []models.OxigenoModel
+
+	err = cur.All(ctx, &res)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	return c.JSON(Response{Message: res})
+}
+
 func (con *Controllers) GetOxigeno(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 

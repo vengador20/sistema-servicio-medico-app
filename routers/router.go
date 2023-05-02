@@ -42,9 +42,13 @@ func (r *Router) Router(router fiber.Router) {
 	// enefermeros
 	router.Get(enfermeros, controller.GetEnfermeros)
 
+	router.Get(enfermeros+"/search/:nombre", controller.GetEnfermerosSearch)
+
 	router.Get(enfermeros+"/:id", controller.GetEnfermerosById)
 
 	router.Get(funeraria, controller.GetFuneraria)
+
+	router.Get(funeraria+"/search/:nombre", controller.GetFunerariaSearch)
 
 	router.Get(funeraria+"/:email", controller.GetFunerariaEmail)
 
@@ -58,9 +62,15 @@ func (r *Router) Router(router fiber.Router) {
 
 	router.Get(medico, controller.GetMedicos)
 
+	//fmt.Println(medico + "/search/:nombre")
+
+	router.Get(medico+"/search/:nombre", controller.GetMedicosSearch)
+
 	router.Get(medico+"/:id", controller.GetMedicoById)
 
 	router.Get(oxigeno, controller.GetOxigeno)
+
+	router.Get(oxigeno+"/search/:nombre", controller.GetOxigenoSearch)
 
 	router.Get(oxigeno+"/:email", controller.GetOxigenoEmail)
 

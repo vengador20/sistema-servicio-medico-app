@@ -174,6 +174,52 @@ func (con *Controllers) GetFuneraria(c *fiber.Ctx) error {
 	return c.JSON(Response{Message: res})
 }
 
+func (con *Controllers) GetFunerariaSearch(c *fiber.Ctx) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	db := con.Client
+
+	nombre := c.Params("nombre")
+
+	fmt.Printf("nombre: %v\n", nombre)
+
+	coll, _ := db.Collection(TABLESERVICIOFUNERARIA)
+
+	funerariaSer := bson.D{{
+		Key: "$lookup", Value: bson.M{
+			"from":         "users",  // tabla ala que esta relacionada
+			"localField":   "idUser", // local id o llave local
+			"foreignField": "_id",    // llave la otra tabla
+			"as":           "idUser", // nombre que se llamara
+		},
+	}}
+
+	filterName := bson.D{{Key: "$match", Value: bson.M{
+		"nombre": bson.M{"$regex": nombre},
+	}}}
+
+	cur, err := coll.Aggregate(ctx, mongo.Pipeline{funerariaSer, filterName})
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	var res []bson.M
+
+	err = cur.All(ctx, &res)
+
+	//fmt.Println(res)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	return c.JSON(Response{Message: res})
+}
+
 func (con *Controllers) GetFunerariaEmail(c *fiber.Ctx) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
