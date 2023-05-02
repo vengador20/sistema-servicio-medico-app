@@ -174,6 +174,56 @@ func (con *Controllers) GetFuneraria(c *fiber.Ctx) error {
 	return c.JSON(Response{Message: res})
 }
 
+func (con *Controllers) GetFunerariaEmail(c *fiber.Ctx) error {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	db := con.Client
+
+	email := c.Params("email")
+
+	coll, _ := db.Collection(TABLESERVICIOFUNERARIA)
+
+	funerariaSer := bson.D{{
+		Key: "$lookup", Value: bson.M{
+			"from":         "users",  // tabla ala que esta relacionada
+			"localField":   "idUser", // local id o llave local
+			"foreignField": "_id",    // llave la otra tabla
+			"as":           "idUser", // nombre que se llamara
+		},
+	}}
+
+	filterUS := bson.D{{Key: "$match", Value: bson.M{
+		"idUser.email": email,
+	}}}
+
+	// filter := bson.D{{Key: "$and", Value: []bson.M{
+	// 	{"tipo": 1},
+	// 	{"servicio": funeraria},
+	// },
+	// }}
+
+	cur, err := coll.Aggregate(ctx, mongo.Pipeline{funerariaSer, filterUS})
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	var res []bson.M
+
+	err = cur.All(ctx, &res)
+
+	//fmt.Println(res)
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
+	}
+
+	return c.JSON(Response{Message: res})
+}
+
 func (con *Controllers) CrearServicioFuneraria(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 

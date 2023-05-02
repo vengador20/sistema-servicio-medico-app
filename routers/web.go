@@ -163,17 +163,15 @@ func Web(router fiber.Router) {
 		//wg.Wait()
 		var js map[string]any
 
-		// if user.Message.Servicio == "funeraria" {
-		// 	js = IsFuneraria("http://localhost:3000/api/servicio-funeraria")
-		// } else if user.Message.Servicio == "oxigeno" {
-		// 	js = IsFuneraria("http://localhost:3000/api/oxigeno")
-		// } else if user.Message.Servicio == "medico" {
-		// 	js = IsFuneraria("http://localhost:3000/api/medico")
-		// } else if user.Message.Servicio == "enfermeros" {
-		// 	js = IsFuneraria("http://localhost:3000/api/enfermeros")
-		// }
-		fmt.Println("email", user.Message.Email)
-		js = IsFuneraria("http://localhost:3000/api/perfil/servicio-medico/" + user.Message.Email)
+		if user.Message.Servicio == "funeraria" {
+			js = IsFuneraria("http://localhost:3000/api/servicio-funeraria/" + user.Message.Email)
+		} else if user.Message.Servicio == "oxigeno" {
+			js = IsFuneraria("http://localhost:3000/api/oxigeno/" + user.Message.Email)
+		} else if user.Message.Servicio == "medico" {
+			js = IsFuneraria("http://localhost:3000/api/perfil/servicio-medico/" + user.Message.Email)
+		} else if user.Message.Servicio == "enfermeros" {
+			js = IsFuneraria("http://localhost:3000/api/enfermeros/" + user.Message.Email)
+		}
 
 		return c.Render("perfilprestador", fiber.Map{
 			"telefono":       user.Message.Telefono,
