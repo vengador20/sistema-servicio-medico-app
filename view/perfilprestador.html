@@ -64,7 +64,16 @@
       <li class="list-group-item text-light">Ubicacion</li>
       <li class="list-group-item text-light">
         <!-- Tipo de servicio -->
-        {{ .servicio }}
+        <!-- {{ .servicio }} -->
+        {{ if (eq .servicio "funeraria") }}
+        funeraria
+        {{else if (eq .servicio "oxigeno")}}
+        oxígeno
+        {{else if (eq .servicio "medico")}}
+        médico
+        {{else if (eq .servicio "enfermeros")}}
+        enfermería
+        {{end}}
       </li>
     </ul>
     <div class="card-body">
