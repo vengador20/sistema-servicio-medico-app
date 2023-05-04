@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +16,7 @@ func registerUser(c *fiber.Ctx, ctx context.Context, con *Controllers) error {
 	var user models.UserRegister
 
 	err := c.BodyParser(&user)
-	fmt.Printf("user: %v\n", user)
+	//fmt.Printf("user: %v\n", user)
 
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
