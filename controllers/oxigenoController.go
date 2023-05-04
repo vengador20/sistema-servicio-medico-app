@@ -203,9 +203,9 @@ func (con *Controllers) GetOxigenoByid(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(Response{Message: "error"})
 	}
 	//fmt.Printf("idServicio: %v\n", idServicio)
-	filter := bson.D{{
-		Key: "_id", Value: idServicio,
-	}}
+	filter := bson.M{
+		"_id": idServicio,
+	}
 
 	var res models.ServiciOxigeno
 

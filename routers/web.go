@@ -297,7 +297,7 @@ func Web(router fiber.Router) {
 
 		id := c.Params("id")
 
-		res, err := http.Get("http://localhost:3000/api/oxigeno/" + id)
+		res, err := http.Get("http://localhost:3000/api/oxigeno/id/" + id)
 
 		if err != nil {
 			fmt.Println(err.Error())
@@ -316,6 +316,7 @@ func Web(router fiber.Router) {
 		if err != nil {
 			c.Render("oxigeno", "")
 		}
+		fmt.Println("oxigeno")
 		fmt.Println(js)
 
 		return c.Render("servicio/update/oxigeno", fiber.Map{

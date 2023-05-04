@@ -75,7 +75,7 @@ func (r *Router) Router(router fiber.Router) {
 
 	router.Get(oxigeno+"/:email", controller.GetOxigenoEmail)
 
-	router.Get(oxigeno+"/:id", controller.GetOxigenoByid)
+	router.Get(oxigeno+"/id/:id", controller.GetOxigenoByid)
 
 	router.Post(oxigeno, controller.CrearOxigeno)
 
